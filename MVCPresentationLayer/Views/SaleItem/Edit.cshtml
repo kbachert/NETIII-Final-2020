@@ -1,0 +1,307 @@
+﻿@model DataObjects.SaleItem
+
+@using DataObjects;
+
+
+<div class="jumbotron">
+
+    <h2>@ViewBag.Title</h2>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.SaleItemID)
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ItemName, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ItemName, new { htmlAttributes = new { @class = "form-control", id = "itemName" } })
+            @Html.ValidationMessageFor(model => model.ItemName, "", new { @class = "text-danger", id = "itemNameError" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ItemSize, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ItemSize, new { htmlAttributes = new { @class = "form-control", id = "itemSize" } })
+            @Html.ValidationMessageFor(model => model.ItemSize, "", new { @class = "text-danger", id = "itemSizeError" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Flavor, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Flavor, new { htmlAttributes = new { @class = "form-control", id = "flavor" } })
+            @Html.ValidationMessageFor(model => model.Flavor, "", new { @class = "text-danger", id = "flavorError" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Price, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control", id = "price" } })
+            @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger", id = "priceError" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Active, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <div class="checkbox">
+                @Html.EditorFor(model => model.Active, new { htmlAttributes = new { @id = "activeStatus" } })
+                @Html.ValidationMessageFor(model => model.Active, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+
+    <h3 style="text-align: center; font-weight: bold;">Sale Item Contents</h3>
+
+    <table id="inventoryQuantityList" class="table">
+        <thead style="height: 35px;">
+            <tr style="height: 35px;">
+                <th style="height: 35px;">
+                    <div class="form-group" style="height: 35px;">
+                        <div class="col-md-10" style="height: 35px;">
+                            @Html.DropDownList("InventoryItemList",
+                                                  new SelectList((IEnumerable<string>)ViewBag.InventoryItemList),
+                                                  new { @class = "form-control", id = "InventoryItemList" })
+                            <p id="inventoryItemError" style="color: darkred; font-size: 12pt; width: 280px;"></p>
+                        </div>
+                    </div>
+                </th>
+                <th style="height: 35px;">
+                    <div class="form-group" style="height: 35px;">
+                        <div class="col-md-10" style="height: 35px;">
+                            Quantity <input id="itemQuantity" type="text" style=" height: 30px; width: 80px;" />
+                            <p id="itemQuantityError" style="color: darkred; font-size: 12pt;"></p>
+                        </div>
+                    </div>
+                </th>
+                <th style="height: 35px;">
+                    <div class="form-group" style="height: 35px;">
+                        <div class="col-md-10" style="height: 35px;">
+                            <input type="button" onclick="addInventoryQuantityToList()" value="Add Item Quantity" />
+                        </div>
+                    </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="background-color: goldenrod;">
+                <th>
+                    Inventory Item
+                </th>
+                <th>
+                    Quantity (Sale Units)
+                </th>
+                <th>
+
+                </th>
+            </tr>
+            @foreach (var inventoryQuantity in (List<InventoryQuantity>)Session["inventoryItemsInSaleItem"])
+            {
+                <tr style="background-color: khaki;">
+                    <td>@inventoryQuantity.InventoryItemName</td>
+                    <td>@inventoryQuantity.Quantity</td>
+                    <td>
+                        <input type="button" id="removeItemQuantity" value="Remove" onclick="DeleteRow(this)" class="btn btn-default" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="button" id="saveSaleItemButton" onclick="saveSaleItem()" value="Save" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+    }
+
+    <script>
+        //Function called when clicking Add Item Quantity button, performs validation, adds the Item Quantity to the List
+        function addInventoryQuantityToList() {
+            var inventoryItemSelection = $("#InventoryItemList").val().toString();
+            var itemQuantitySelection = $("#itemQuantity").val().toString();
+            var quantityIsNumeric = $.isNumeric(itemQuantitySelection);
+            var quantityIsNegative = itemQuantitySelection.startsWith("-");
+            var quantityTooLarge = false;
+            var inventoryItemIsBlank = inventoryItemSelection === "";
+
+            //Validation
+            if (inventoryItemIsBlank) {
+                $("#inventoryItemError").text("Must select an item!");
+            }
+            else {
+                $("#inventoryItemError").text("");
+            }
+            if (!quantityIsNumeric) {
+                $("#itemQuantityError").text("Must be a Number!");
+            }
+            else if (parseFloat(itemQuantitySelection) > 1000000) {
+                $("#itemQuantityError").text("Cannot exceed 1000000!");
+                quantityTooLarge = true;
+            }
+            else if (quantityIsNegative) {
+                $("#itemQuantityError").text("Must not be Negative!");
+            }
+            else {
+                $("#itemQuantityError").text("");
+            }
+
+            //If all validations so far have passed, try to add them to the HTML Table
+            if (quantityIsNumeric && !inventoryItemIsBlank && !quantityIsNegative && !quantityTooLarge) {
+                //Gets everything in the Body of the HTML Table
+                var itemList = $('#inventoryQuantityList > tbody');
+
+                //Searches the list of already added items, for the item trying to add
+                var eachFoundItem = itemList.find("tr:has(td:contains('" + inventoryItemSelection + "'))");
+
+                //Will be 0 if no matches found
+                var MatchesFound = eachFoundItem.length;
+
+                //If selection has already been added (anything but 0 will result true)
+                if (MatchesFound) {
+                    $("#inventoryItemError").text("Item has aready been added!");
+                }
+                else {
+                    //Adds item and quantity to the visible Table
+                    $('#inventoryQuantityList > tbody:last-child').append("<tr style='background-color: khaki;'><td>"
+                        + inventoryItemSelection + "</td><td>" + itemQuantitySelection +
+                        "</td><td><input type='button' id='removeItemQuantity' value='Remove' onclick='DeleteRow(this)' class='btn btn-default'/></td></tr>");
+
+                    $("#inventoryItemError").text("");
+                }
+            }
+        }
+
+        //Delete the ItemQuantity of the row containing the clicked button
+        function DeleteRow(button) {
+            if (typeof(button) == "object") {
+                $(button).closest("tr").remove();
+            } else {
+                return false;
+            }
+        }
+
+        //Function called when clicking the save button, performs validation, and redirects to Controller
+        function saveSaleItem() {
+            var itemNameInput = $("#itemName").val().toString();
+            var itemSizeInput = $("#itemSize").val().toString();
+            var flavorInput = $("#flavor").val().toString();
+            var priceInput = $("#price").val().toString();
+            var activeInput = $("#activeStatus").is(":checked");
+
+            var itemNameTooLong = itemNameInput.length > 35;
+            var itemSizeTooLong = itemSizeInput.length > 20;
+            var flavorTooLong = flavorInput.length > 35;
+            var priceTooLong = priceInput.length > 9;
+
+            var priceIsNumeric = $.isNumeric(priceInput);
+            var itemNameIsEmpty = $.trim(itemNameInput) === "";
+            var priceIsEmpty = $.trim(priceInput) === "";
+
+            //Validation
+            if (itemNameTooLong) {
+                $("#itemNameError").html("Item Name cannot be more than 35 characters!");
+            }
+            else if (itemNameIsEmpty) {
+                $("#itemNameError").html("Item Name field is Required!");
+            }
+            else {
+                $("#itemNameError").html("");
+            }
+            if (itemSizeTooLong) {
+                $("#itemSizeError").html("Item Size cannot be more than 20 characters!");
+            }
+            else {
+                $("#itemSizeError").html("");
+            }
+            if (flavorTooLong) {
+                $("#flavorError").html("Flavor cannot be more than 35 characters!");
+            }
+            else {
+                $("#flavorError").html("");
+            }
+            if (priceTooLong) {
+                $("#priceError").html("Price cannot be more than 9 characters!");
+            }
+            else if (priceIsEmpty) {
+                $("#priceError").html("Price field is Required!");
+            }
+            else if (!priceIsNumeric) {
+                $("#priceError").html("Price field must be a number!");
+            }
+            else {
+                $("#priceError").html("");
+            }
+
+            //If all validation has passed
+            if (!itemNameTooLong && !itemSizeTooLong && !flavorTooLong &&
+                !priceTooLong && !itemNameIsEmpty && !priceIsEmpty && priceIsNumeric) {
+
+                //Getting an array from the Table data, and adding each to the inventoryQuantityArray
+                var tableDataArray = new Array();
+
+                //Gets the HTML table
+                var visibleTable = document.getElementById('inventoryQuantityList');
+                
+                //Gets the row count of the table
+                var rowLength = visibleTable.rows.length;
+                
+                //Loops through rows, starting at row 3 (to exclude table header data)
+                for (i = 2; i < rowLength; i++){
+                
+                   //Gets the cells from the current row
+                   var rowCells = visibleTable.rows.item(i).cells;
+                
+                   //Gets the count of cells in the current row
+                   var cellLength = rowCells.length;
+                
+                   //Loops through each cell in the current row
+                   for(var j = 0; j < cellLength; j++){
+                       //Adds the call data to an array, no matter what it contains
+                       tableDataArray.push(rowCells.item(j).innerHTML);
+                   }
+                }
+
+                //Holds only the valid cells (those containing an InventoryItem or a Quantity) from the table
+                var inventoryQuantityArray = new Array();
+
+                //Only adds InventoryQuantities to inventoryQuantityArray, not the button or blank data
+                for (var i = 0; i < tableDataArray.length; i++) {
+                    if (tableDataArray[i] != "" && tableDataArray[i] != " " && !(tableDataArray[i].includes("input type"))) {
+                        inventoryQuantityArray.push(tableDataArray[i]);
+                    }
+                }
+
+                var postData = JSON.stringify({
+                    'inventoryQuantityStringList': inventoryQuantityArray, 'newItemName': itemNameInput,
+                    'newItemSize': itemSizeInput, 'newFlavor': flavorInput, 'newPrice': priceInput, 'newActiveStatus': activeInput
+                });
+                
+                $.ajax({ 
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    type: "POST", 
+                    url: "/SaleItem/Edit",
+                    data: postData,
+                    success: function (data) {
+                        window.location.href = data;
+                    },
+                    traditional: true 
+                });
+            }
+        }
+    </script>
+
+    <div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>
+
+</div>

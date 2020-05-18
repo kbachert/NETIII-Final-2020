@@ -1,0 +1,79 @@
+﻿@model DataObjects.InventoryItem
+
+<div class="jumbotron">
+
+    <h2>@ViewBag.Title</h2>
+
+    <h3>Are you sure you want to delete this Inventory Item?</h3>
+    <div>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.ItemName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ItemName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.PurchaseUnit)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PurchaseUnit)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.SaleUnit)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.SaleUnit)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.SaleUnitsPerPurchaseUnit)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.SaleUnitsPerPurchaseUnit)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.QuantityOnHand)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.QuantityOnHand)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ReorderLevel)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ReorderLevel)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Active)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Active)
+            </dd>
+
+        </dl>
+
+        @using (Html.BeginForm("Delete", "Inventory", new { itemName = Model.ItemName }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-actions no-color">
+                <input type="submit" value="Delete" class="btn btn-default" /> |
+                @Html.ActionLink("Back to List", "Index")
+            </div>
+        }
+    </div>
+</div>

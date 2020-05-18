@@ -1,0 +1,81 @@
+﻿@model DataObjects.InventoryItem
+
+    <div class="jumbotron">
+
+        <h2>@ViewBag.Title</h2>
+
+        <div>
+            <hr />
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.ItemName)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.ItemName)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.PurchaseUnit)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.PurchaseUnit)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.SaleUnit)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.SaleUnit)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.SaleUnitsPerPurchaseUnit)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.SaleUnitsPerPurchaseUnit)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.QuantityOnHand)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.QuantityOnHand)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.ReorderLevel)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.ReorderLevel)
+                </dd>
+
+                <dt>
+                    @Html.DisplayName("Preferred Vendor")
+                </dt>
+
+                <dd>
+                    @ViewBag.PreferredVendor
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Active)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Active)
+                </dd>
+
+            </dl>
+        </div>
+        <div>
+            <p>
+                @Html.ActionLink("Edit", "Edit", new { id = Model.ItemName }) |
+                @Html.ActionLink("Back to List", "Index")
+            </p>
+        </div>

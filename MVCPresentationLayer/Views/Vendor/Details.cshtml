@@ -1,0 +1,40 @@
+﻿@model DataObjects.Vendor
+
+<div class="jumbotron">
+
+    <h2>@ViewBag.Title</h2>
+
+    <div>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.VendorName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.VendorName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.VendorPhone)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.VendorPhone)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Active)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Active)
+            </dd>
+
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.VendorName }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+</div>

@@ -1,0 +1,65 @@
+﻿@model IEnumerable<DataObjects.InventoryItem>
+
+    <div class="jumbotron">
+
+        <h2>@ViewBag.Title</h2>
+
+        @if (User.IsInRole("General Manager") || User.IsInRole("Shift Manager") || User.IsInRole("Administrator"))
+        {
+            <p>
+                @Html.ActionLink("Create New", "Create")
+            </p>
+        }
+
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ItemName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.SaleUnit)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.QuantityOnHand)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ReorderLevel)
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ItemName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SaleUnit)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.QuantityOnHand)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReorderLevel)
+                    </td>
+                    @if (User.IsInRole("General Manager") || User.IsInRole("Administrator"))
+                    {
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { id = item.ItemName }) |
+                            @Html.ActionLink("Details", "Details", new { id = item.ItemName }) |
+                            @Html.ActionLink("Delete", "Delete", new { id = item.ItemName })
+                        </td>
+                    }
+                    else if (User.IsInRole("Shift Manager"))
+                    {
+                        <td>
+                            @Html.ActionLink("Details", "Details", new { id = item.ItemName }) |
+                            @Html.ActionLink("Delete", "Delete", new { id = item.ItemName })
+                        </td>
+                    }
+                </tr>
+            }
+
+        </table>
+    </div>

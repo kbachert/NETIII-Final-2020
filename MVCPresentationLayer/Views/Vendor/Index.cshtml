@@ -1,0 +1,39 @@
+﻿@model IEnumerable<DataObjects.Vendor>
+
+<div class="jumbotron">
+
+    <h2>@ViewBag.Title</h2>
+
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.VendorName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VendorPhone)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.VendorName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.VendorPhone)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.VendorName }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.VendorName }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.VendorName })
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>
